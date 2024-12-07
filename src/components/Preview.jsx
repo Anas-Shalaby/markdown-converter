@@ -1,42 +1,65 @@
 import React from 'react';
-import { marked } from 'marked';
+import MarkdownIt from 'markdown-it';
+import mk from 'markdown-it-katex';
 import DOMPurify from 'dompurify';
+import { processTextEquations } from '../utils/mathUtils';
+import 'katex/dist/katex.min.css';
+
+const md = new MarkdownIt({
+  html: true,
+  breaks: true,
+  typographer: true
+}).use(mk);
 
 const Preview = ({ content, mode }) => {
   const createMarkup = () => {
     if (mode === 'markdown') {
-      const rawMarkup = marked(content, { breaks: true });
-      const cleanMarkup = DOMPurify.sanitize(rawMarkup);
-      return { __html: cleanMarkup };
+      const renderedContent = md.render(content);
+      const cleanContent = DOMPurify.sanitize(renderedContent);
+      return { __html: cleanContent };
+    } else {
+      // Process text equations before rendering
+      const processedContent = processTextEquations(content);
+      // Use markdown-it to render the equations
+      const renderedContent = md.render(processedContent);
+      const cleanContent = DOMPurify.sanitize(renderedContent);
+      return { __html: cleanContent };
     }
-    
-    // For text mode, process the content line by line
-    const processedContent = content.split('\n').map(line => {
-      if (line.startsWith('[H1]')) {
-        return `<h1>${line.substring(4)}</h1>`;
-      }
-      // Process bold and italic tags
-      return line
-        .replace(/\[B\](.*?)\[\/B\]/g, '<strong>$1</strong>')
-        .replace(/\[I\](.*?)\[\/I\]/g, '<em>$1</em>');
-    }).join('\n');
-    
-    return { __html: processedContent };
   };
 
   return (
-    <div className="h-full bg-white rounded-lg shadow-lg overflow-hidden">
-      <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
-        <h2 className="text-sm font-medium text-gray-600">
-          {mode === 'markdown' ? 'Preview' : 'Markdown Output'}
-        </h2>
-      </div>
-      <div className="h-[calc(100%-40px)] overflow-auto p-6">
-        <div 
-          className={mode === 'markdown' ? 'prose max-w-none ' : 'whitespace-pre-wrap font-mono text-gray-700'}
-          dangerouslySetInnerHTML={createMarkup()} 
-        />
-      </div>
+    <div className="h-full overflow-auto bg-white border border-gray-200 rounded-lg p-4">
+      <div 
+        className="prose max-w-none
+          prose-headings:font-bold
+          prose-h1:text-3xl
+          prose-h2:text-2xl
+          prose-h3:text-xl
+          prose-p:my-4
+          prose-a:text-blue-600
+          prose-a:no-underline
+          prose-a:hover:text-blue-800
+          prose-blockquote:border-l-4
+          prose-blockquote:border-gray-300
+          prose-blockquote:pl-4
+          prose-blockquote:italic
+          prose-table:w-full 
+          prose-table:border-collapse 
+          prose-td:border 
+          prose-td:border-gray-200 
+          prose-td:p-3
+          prose-th:border 
+          prose-th:border-gray-200 
+          prose-th:bg-gray-50 
+          prose-th:p-3
+          prose-thead:border-b-2
+          prose-thead:border-gray-200
+          prose-tr:border-b
+          prose-tr:border-gray-200
+          prose-tr:last:border-b-0
+          whitespace-pre-wrap"
+        dangerouslySetInnerHTML={createMarkup()} 
+      />
     </div>
   );
 };

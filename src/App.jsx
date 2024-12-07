@@ -1,21 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Editor from './components/Editor';
 import Preview from './components/Preview';
 import CopyButton from './components/CopyButton';
 import ConversionToggle from './components/ConversionToggle';
+import DownloadButton from './components/DownloadButton';
 import { textToMarkdown, markdownToText } from './utils/converter';
 
 function App() {
   const [content, setContent] = useState('');
-  const [mode, setMode] = useState('markdown'); // 'markdown' or 'text'
+  const [mode, setMode] = useState('markdown');
+  const [processedContent, setProcessedContent] = useState('');
+
+  // Process content whenever it changes or mode changes
+  useEffect(() => {
+    if (!content) {
+      setProcessedContent('');
+      return;
+    }
+
+    // Always process the content based on current mode
+    const processed = mode === 'markdown' 
+      ? textToMarkdown(content)
+      : markdownToText(content);
+    
+    setProcessedContent(processed);
+  }, [content, mode]);
+
+  const handleContentChange = (newContent) => {
+    setContent(newContent);
+  };
 
   const handleToggleMode = () => {
     const newMode = mode === 'markdown' ? 'text' : 'markdown';
-    const convertedContent = newMode === 'markdown' 
-      ? textToMarkdown(content)
-      : markdownToText(content);
     setMode(newMode);
-    setContent(convertedContent);
   };
 
   return (
@@ -32,17 +49,20 @@ function App() {
 
         <div className="flex justify-between items-center mb-6">
           <ConversionToggle mode={mode} onToggle={handleToggleMode} />
-          <CopyButton text={content} mode={mode} />
+          <div className="flex gap-4">
+            <DownloadButton content={processedContent} mode={mode} />
+            <CopyButton text={processedContent} mode={mode} />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[calc(100vh-250px)]">
           <Editor 
-            value={content} 
-            onChange={setContent}
+            value={processedContent} 
+            onChange={handleContentChange}
             mode={mode}
           />
           <Preview 
-            content={content}
+            content={processedContent}
             mode={mode}
           />
         </div>
