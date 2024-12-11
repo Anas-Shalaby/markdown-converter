@@ -1,7 +1,7 @@
-import { marked } from 'marked';
+import { marked } from "marked";
 
 export const convertToRichText = (content, mode) => {
-  if (mode === 'markdown') {
+  if (mode === "markdown") {
     // Configure marked for proper table handling
     marked.setOptions({
       gfm: true,
@@ -9,12 +9,11 @@ export const convertToRichText = (content, mode) => {
       breaks: true,
       pedantic: false,
       smartLists: true,
-      xhtml: true
+      xhtml: true,
     });
 
     // Convert markdown to HTML with proper table structure
     const html = marked(content);
-    
     // Add Word-compatible styling
     return `
       <html>
@@ -48,16 +47,16 @@ export const convertToRichText = (content, mode) => {
       </head>
       <body>
         ${content
-          .split('\n')
-          .map(line => {
-            if (line.startsWith('[H1]')) {
+          .split("\n")
+          .map((line) => {
+            if (line.startsWith("[H1]")) {
               return `<h1>${line.substring(4)}</h1>`;
             }
             return line
-              .replace(/\[B\](.*?)\[\/B\]/g, '<strong>$1</strong>')
-              .replace(/\[I\](.*?)\[\/I\]/g, '<em>$1</em>');
+              .replace(/\[B\](.*?)\[\/B\]/g, "<strong>$1</strong>")
+              .replace(/\[I\](.*?)\[\/I\]/g, "<em>$1</em>");
           })
-          .join('<br>')}
+          .join("<br>")}
       </body>
     </html>
   `;
