@@ -63,7 +63,7 @@ function App() {
         </div>
       </div>
 
-      <div className="flex-1 grid grid-cols-2 gap-4 h-[calc(100vh-200px)]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[calc(100vh-250px)]">
         <Editor 
           content={content} 
           setContent={setContent} 
