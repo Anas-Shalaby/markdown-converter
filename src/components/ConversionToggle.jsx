@@ -3,7 +3,7 @@ import { FaExchangeAlt } from 'react-icons/fa';
 
 const ConversionToggle = ({ mode, onToggle }) => {
   return (
-    <div className="flex items-center gap-4 bg-white p-3 rounded-lg shadow-sm">
+    <div className="flex justify-center md:justify-start items-center gap-4 bg-white p-3 rounded-lg shadow-sm">
       <span className={`font-medium ${mode === 'markdown' ? 'text-blue-600' : 'text-gray-500'}`}>
         Markdown
       </span>

@@ -54,7 +54,7 @@ function App() {
         <p className="text-gray-600">Convert between Markdown and Plain Text with ease</p>
       </div>
 
-      <div className="justify-between items-center mb-6  md:flex">
+      <div className="justify-between items-center  mb-6  md:flex">
         <ConversionToggle mode={mode} onToggle={handleToggleMode} />
         <div className="flex justify-center mt-3 md:flex-row  gap-4">
           <DownloadButton content={processedContent} mode={mode} />
