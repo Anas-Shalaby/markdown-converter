@@ -15,7 +15,7 @@ const adhkar = [
     "اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ"
 ];
 
-const AdhkarToast = () => {
+const AdhkarToast = ({ isDarkMode = false }) => {
     useEffect(() => {
         // Function to show a random dhikr
         const showDhikr = () => {
@@ -24,8 +24,8 @@ const AdhkarToast = () => {
                 duration: 5000,
                 icon: '📖',
                 iconTheme: {
-                    primary: '#1a365d',
-                    secondary: '#ffffff',
+                    primary: isDarkMode ? '#4299e1' : '#1a365d',
+                    secondary: isDarkMode ? '#2d3748' : '#ffffff',
                 },
                 ariaProps: {
                     role: 'status',
@@ -34,15 +34,15 @@ const AdhkarToast = () => {
                 
                 position: 'top-left',
                 style: {
-                    background: '#ffffff',
-                    color: '#1a365d',
+                    background: isDarkMode ? '#2d3748' : '#ffffff',
+                    color: isDarkMode ? '#e2e8f0' : '#1a365d',
                     padding: '16px 24px',
                     borderRadius: '12px',
                     fontFamily: 'Arial',
                     fontSize: '18px',
                     direction: 'rtl',
                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                    border: '1px solid #e2e8f0',
+                    border: `1px solid ${isDarkMode ? '#4a5568' : '#e2e8f0'}`,
                     minWidth: '300px',
                     textAlign: 'center',
                     lineHeight: '1.5'
@@ -54,11 +54,11 @@ const AdhkarToast = () => {
         showDhikr();
 
         // Set interval to show dhikr every 5 minutes
-        const interval = setInterval(showDhikr, 1 * 60 * 1000);
+        const interval = setInterval(showDhikr, 5 * 60 * 1000);
 
         // Cleanup interval on component unmount
         return () => clearInterval(interval);
-    }, []);
+    }, [isDarkMode]);
 
     return null; // This component doesn't render anything
 };

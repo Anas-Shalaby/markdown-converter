@@ -11,7 +11,13 @@ const md = new MarkdownIt({
   typographer: true
 }).use(mk);
 
-const Preview = ({ content, mode, onChange }) => {
+const Preview = ({ 
+  content, 
+  mode, 
+  onChange, 
+  isDarkMode,
+  isRTL 
+}) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const createMarkup = () => {
@@ -41,47 +47,51 @@ const Preview = ({ content, mode, onChange }) => {
   };
 
   return (
-    <div className="h-full overflow-auto bg-white border border-gray-200 rounded-lg p-4">
-      {/* <button
-        onClick={() => setIsEditing(!isEditing)}
-        className="absolute top-2 right-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
-      >
-        {isEditing ? 'Preview' : 'Edit'}
-      </button> */}
-      
-    
-        <div 
-         className="prose max-w-none
-         prose-headings:font-bold
-         prose-h1:text-3xl
-         prose-h2:text-2xl
-         prose-h3:text-xl
-         prose-p:my-4
-         prose-a:text-blue-600
-         prose-a:no-underline
-         prose-a:hover:text-blue-800
-         prose-blockquote:border-l-4
-         prose-blockquote:border-gray-300
-         prose-blockquote:pl-4
-         prose-blockquote:italic
-         prose-table:w-full 
-         prose-table:border-collapse 
-         prose-td:border 
-         prose-td:border-gray-200 
-         prose-td:p-3
-         prose-th:border 
-         prose-th:border-gray-200 
-         prose-th:bg-gray-50 
-         prose-th:p-3
-         prose-thead:border-b-2
-         prose-thead:border-gray-200
-         prose-tr:border-b
-         prose-tr:border-gray-200
-         prose-tr:last:border-b-0
-         whitespace-pre-wrap"
-          dangerouslySetInnerHTML={createMarkup()} 
-        />
-      
+    <div 
+      className={`h-full overflow-auto rounded-lg p-4 transition-colors duration-300 ${
+        isDarkMode 
+          ? 'bg-gray-800 text-gray-200 border border-gray-700' 
+          : 'bg-white border border-gray-200'
+      }`}
+      style={{
+        direction: isRTL ? 'rtl' : 'ltr'
+      }}
+    >
+      <div 
+        className={`prose max-w-none 
+        prose-headings:font-bold
+        prose-h1:text-3xl
+        prose-h2:text-2xl
+        prose-h3:text-xl
+        prose-p:my-4
+        prose-a:text-blue-600
+        prose-a:no-underline
+        prose-a:hover:text-blue-800
+        prose-blockquote:border-l-4
+        prose-blockquote:border-gray-300
+        prose-blockquote:pl-4
+        prose-blockquote:italic
+        prose-table:w-full 
+        prose-table:border-collapse 
+        prose-td:border 
+        prose-td:border-gray-200 
+        prose-td:p-3
+        prose-th:border 
+        prose-th:border-gray-200 
+        prose-th:bg-gray-50 
+        prose-th:p-3
+        prose-thead:border-b-2
+        prose-thead:border-gray-200
+        prose-tr:border-b
+        prose-tr:border-gray-200
+        prose-tr:last:border-b-0
+        whitespace-pre-wrap
+        ${isDarkMode 
+          ? 'prose-invert prose-a:text-blue-400 prose-a:hover:text-blue-300 text-gray-100' 
+          : 'text-gray-800'
+        }`}
+        dangerouslySetInnerHTML={createMarkup()} 
+      />
     </div>
   );
 };

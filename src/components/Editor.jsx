@@ -1,11 +1,21 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import FormatToolbar from './FormatToolbar';
+import { useLanguage } from '../contexts/LanguageContext';
 
-const Editor = ({ value, onChange, mode }) => {
+const Editor = ({ 
+  value, 
+  onChange, 
+  mode, 
+  isDarkMode, 
+  isRTL 
+}) => {
   const textareaRef = useRef(null);
+  const [content, setContent] = useState(value);
+  const { t } = useLanguage();
+
   const placeholder = mode === 'markdown' 
-    ? "Enter your markdown here..."
-    : "Enter your text here...";
+    ? t('placeholders.markdownEditor')
+    : t('placeholders.plainTextEditor');
 
   const handleFormat = (format) => {
     const textarea = textareaRef.current;
@@ -49,26 +59,49 @@ const Editor = ({ value, onChange, mode }) => {
         break;
     }
 
+    setContent(newText);
     onChange(newText);
     
     // Restore focus to textarea
     textarea.focus();
   };
 
+  const handleContentChange = (e) => {
+    const newContent = e.target.value;
+    setContent(newContent);
+    onChange(newContent);
+  };
+
   return (
-    <div className="h-full bg-white rounded-lg shadow-lg overflow-hidden">
-      <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
-        <h2 className="text-sm font-medium text-gray-600">
+    <div className={`h-full rounded-lg shadow-lg overflow-hidden transition-colors duration-300 ${
+      isDarkMode 
+        ? 'bg-gray-800 border border-gray-700' 
+        : 'bg-white'
+    }`}>
+      <div className={`px-4 py-2 border-b ${
+        isDarkMode 
+          ? 'bg-gray-700 border-gray-600 text-gray-300' 
+          : 'bg-gray-50 border-gray-200 text-gray-600'
+      }`}>
+        <h2 className="text-sm font-medium">
           {mode === 'markdown' ? 'Markdown Editor' : 'Text Editor'}
         </h2>
       </div>
       {mode === 'text' && <FormatToolbar onFormat={handleFormat} />}
       <textarea
         ref={textareaRef}
-        className="w-full h-[calc(100%-40px)] p-4 focus:outline-none focus:ring-0 resize-none font-mono text-gray-700"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        className={`w-full h-[calc(100%-40px)] p-4 focus:outline-none focus:ring-0 resize-none font-mono transition-colors duration-300 ${
+          isDarkMode 
+            ? 'bg-gray-800 text-gray-100 placeholder-gray-500' 
+            : 'text-gray-700 placeholder-gray-500'
+        }`}
+        value={content}
+        onChange={handleContentChange}
         placeholder={placeholder}
+        style={{
+          direction: isRTL ? 'rtl' : 'ltr',
+          textAlign: isRTL ? 'right' : 'left'
+        }}
       />
     </div>
   );

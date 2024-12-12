@@ -1,50 +1,39 @@
 import React, { useState } from 'react';
-import { FaRegCopy, FaCheck } from 'react-icons/fa';
-import { convertToRichText } from '../utils/copyUtils';
+import { FaCopy, FaCheck } from 'react-icons/fa';
+import { useLanguage } from '../contexts/LanguageContext';
 
-const CopyButton = ({ text, mode }) => {
-  const [copied, setCopied] = useState(false);
+const CopyButton = ({ text, mode, className = '' }) => {
+  const [isCopied, setIsCopied] = useState(false);
+  const { t, isDarkMode } = useLanguage();
 
   const handleCopy = async () => {
     try {
-      const richText = convertToRichText(text, mode);
-      
-      // Create a temporary element to hold the formatted content
-      const container = document.createElement('div');
-      container.innerHTML = richText;
-      
-      // Create a clipboard item with both plain text and HTML formats
-      const clipboardItem = new ClipboardItem({
-        'text/plain': new Blob([container.textContent], { type: 'text/plain' }),
-        'text/html': new Blob([richText], { type: 'text/html' })
-      });
-      
-      await navigator.clipboard.write([clipboardItem]);
-      
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy text:', err);
-      // Fallback to plain text copy if rich copy fails
       await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
     }
   };
 
   return (
-    <button
+    <button 
       onClick={handleCopy}
-      className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-      title="Copy formatted text"
+      className={`flex items-center justify-center px-4 py-2 rounded-lg transition-all duration-300 
+      ${isDarkMode 
+        ? 'bg-green-700 text-white hover:bg-green-600' 
+        : 'bg-green-500 text-white hover:bg-green-600'
+      } ${className}`}
     >
-      {copied ? (
+      {isCopied ? (
         <>
-          <FaCheck /> Copied!
+          <FaCheck className="mr-2" />
+          {t('buttons.copied')}
         </>
       ) : (
         <>
-          <FaRegCopy /> Copy Text
+          <FaCopy className="mr-2" />
+          {t('buttons.copy')}
         </>
       )}
     </button>

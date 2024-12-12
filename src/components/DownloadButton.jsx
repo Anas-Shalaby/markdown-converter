@@ -7,6 +7,7 @@ import DOMPurify from 'dompurify';
 import pptxgen from "pptxgenjs";
 import { processTextEquations } from '../utils/mathUtils';
 import 'katex/dist/katex.min.css';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const md = new MarkdownIt({
   html: true,
@@ -14,8 +15,9 @@ const md = new MarkdownIt({
   typographer: true
 }).use(mk);
 
-const DownloadButton = ({ content, mode }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const DownloadButton = ({ content, mode, className = '' }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { t, isDarkMode } = useLanguage();
 
   const getFormattedContent = () => {
     const element = document.createElement('div');
@@ -51,7 +53,7 @@ const DownloadButton = ({ content, mode }) => {
       }
     };
     html2pdf().set(opt).from(element).save();
-    setIsOpen(false);
+    setIsDropdownOpen(false);
   };
 
   const handleWordDownload = () => {
@@ -113,7 +115,7 @@ const DownloadButton = ({ content, mode }) => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    setIsOpen(false);
+    setIsDropdownOpen(false);
   };
 
   const handlePptxDownload = async () => {
@@ -252,7 +254,7 @@ const DownloadButton = ({ content, mode }) => {
 
       // Save the presentation
       await pres.writeFile({ fileName: 'presentation.pptx' });
-      setIsOpen(false);
+      setIsDropdownOpen(false);
     } catch (error) {
       console.error('Error creating PowerPoint:', error);
     }
@@ -261,39 +263,41 @@ const DownloadButton = ({ content, mode }) => {
   return (
     <div className="relative">
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
-        title="Download"
+        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        className={`flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors ${className}`}
       >
         <FaDownload />
-        <span>Download</span>
+        <span>{t('buttons.download')}</span>
       </button>
 
-      {isOpen && (
-        <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-lg shadow-xl z-10 border border-gray-200">
-          <button
-            onClick={handlePdfDownload}
-            className="flex items-center gap-2 px-4 py-2 w-full text-left hover:bg-gray-100 transition-colors"
-          >
-            <FaFilePdf className="text-red-500" />
-            <span>Download as PDF</span>
-          </button>
-          <button
-            onClick={handleWordDownload}
-            className="flex items-center gap-2 px-4 py-2 w-full text-left hover:bg-gray-100 transition-colors"
-          >
-            <FaFileWord className="text-blue-500" />
-            <span>Download as Word</span>
-          </button>
-          <button
-            onClick={handlePptxDownload}
-            className="flex items-center gap-2 px-4 py-2 w-full text-left hover:bg-gray-100 transition-colors"
-          >
-            <FaFilePowerpoint className="text-red-600" />
-            <span>Download as PowerPoint</span>
-          </button>
+      {isDropdownOpen && (
+        <div className={`absolute z-10 right-0 mt-2 w-48 rounded-md shadow-lg 
+          ${mode === 'markdown' ? 'bg-white' : 'bg-gray-100'} 
+          ring-1 ring-black ring-opacity-5 focus:outline-none`}>
+          <div className="py-1" role="menu" aria-orientation="vertical">
+            <button
+              onClick={handlePdfDownload}
+              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              role="menuitem"
+            >
+              <FaFilePdf className="mr-2" /> {t('buttons.pdf')}
+            </button>
+            <button
+              onClick={handleWordDownload}
+              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              role="menuitem"
+            >
+              <FaFileWord className="mr-2" /> {t('buttons.word')}
+            </button>
+            <button
+              onClick={handlePptxDownload}
+              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              role="menuitem"
+            >
+              <FaFilePowerpoint className="mr-2" /> {t('buttons.powerpoint')}
+            </button>
+          </div>
         </div>
-
       )}
     </div>
   );

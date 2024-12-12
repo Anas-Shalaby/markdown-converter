@@ -6,6 +6,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,jsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       typography: {
@@ -64,10 +65,27 @@ export default {
             'tbody td:last-child': {
               paddingRight: '0.75rem',
             },
-          },
-        },
-      },
-    },
+            // Dark mode typography styles
+            '--tw-prose-body': 'var(--tw-prose-dark-body)',
+            '--tw-prose-headings': 'var(--tw-prose-dark-headings)',
+            '--tw-prose-lead': 'var(--tw-prose-dark-lead)',
+            '--tw-prose-links': 'var(--tw-prose-dark-links)',
+            '--tw-prose-bold': 'var(--tw-prose-dark-bold)',
+            '--tw-prose-counters': 'var(--tw-prose-dark-counters)',
+            '--tw-prose-bullets': 'var(--tw-prose-dark-bullets)',
+            '--tw-prose-hr': 'var(--tw-prose-dark-hr)',
+            '--tw-prose-quotes': 'var(--tw-prose-dark-quotes)',
+            '--tw-prose-quote-borders': 'var(--tw-prose-dark-quote-borders)',
+            '--tw-prose-captions': 'var(--tw-prose-dark-captions)',
+            '--tw-prose-code': 'var(--tw-prose-dark-code)',
+            '--tw-prose-pre-code': 'var(--tw-prose-dark-pre-code)',
+            '--tw-prose-pre-bg': 'var(--tw-prose-dark-pre-bg)',
+            '--tw-prose-th-borders': 'var(--tw-prose-dark-th-borders)',
+            '--tw-prose-td-borders': 'var(--tw-prose-dark-td-borders)',
+          }
+        }
+      }
+    }
   },
   plugins: [
     typography,
