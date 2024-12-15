@@ -1,97 +1,75 @@
-import React, { useState } from 'react';
-import MarkdownIt from 'markdown-it';
-import mk from 'markdown-it-katex';
+import React from 'react';
 import DOMPurify from 'dompurify';
-import { processTextEquations } from '../utils/mathUtils';
-import 'katex/dist/katex.min.css';
-
-const md = new MarkdownIt({
-  html: true,
-  breaks: true,
-  typographer: true
-}).use(mk);
+import { marked } from 'marked';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Preview = ({ 
   content, 
   mode, 
-  onChange, 
-  isDarkMode,
-  isRTL 
+  isDarkMode, 
+  isRTL, 
+  className = '' 
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
+  const { t } = useLanguage();
 
+  // Sanitize and convert markdown to HTML
   const createMarkup = () => {
-    if (mode === 'markdown') {
-      const renderedContent = md.render(content);
-      const cleanContent = DOMPurify.sanitize(renderedContent);
-      return { __html: cleanContent };
-    } else {
-      // Process text equations before rendering
-      const processedContent = processTextEquations(content);
-      // Use markdown-it to render the equations
-      const renderedContent = md.render(processedContent);
-      const cleanContent = DOMPurify.sanitize(renderedContent);
-      return { __html: cleanContent };
-    }
-  };
-
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  const handleSave = (e) => {
-    setIsEditing(false);
-    if (onChange) {
-      onChange(e.target.value);
-    }
+    if (!content) return { __html: '' };
+    
+    const rawMarkup = mode === 'markdown' 
+      ? marked.parse(content)
+      : content.replace(/&/g, '&amp;')
+               .replace(/</g, '&lt;')
+               .replace(/>/g, '&gt;')
+               .replace(/\n/g, '<br>');
+    
+    return { 
+      __html: DOMPurify.sanitize(rawMarkup) 
+    };
   };
 
   return (
-    <div 
-      className={`h-full overflow-auto rounded-lg p-4 transition-colors duration-300 ${
+    <div className={`preview-container flex flex-col h-full ${
+      isDarkMode ? 'bg-gray-800' : 'bg-white'
+    } rounded-lg shadow-md ${className}`}>
+      <div className={`px-4 py-2 border-b flex items-center ${
         isDarkMode 
-          ? 'bg-gray-800 text-gray-200 border border-gray-700' 
-          : 'bg-white border border-gray-200'
-      }`}
-      style={{
-        direction: isRTL ? 'rtl' : 'ltr'
-      }}
-    >
+          ? 'bg-gray-700 border-gray-600 text-gray-300' 
+          : 'bg-gray-100 border-gray-200'
+      }`}>
+        <h2 className="text-sm font-medium">
+          {mode === 'markdown' ? 'Markdown Preview' : 'Text Preview'}
+        </h2>
+      </div>
+
       <div 
-        className={`prose max-w-none 
-        prose-headings:font-bold
-        prose-h1:text-3xl
-        prose-h2:text-2xl
-        prose-h3:text-xl
-        prose-p:my-4
-        prose-a:text-blue-600
-        prose-a:no-underline
-        prose-a:hover:text-blue-800
-        prose-blockquote:border-l-4
-        prose-blockquote:border-gray-300
-        prose-blockquote:pl-4
-        prose-blockquote:italic
-        prose-table:w-full 
-        prose-table:border-collapse 
-        prose-td:border 
-        prose-td:border-gray-200 
-        prose-td:p-3
-        prose-th:border 
-        prose-th:border-gray-200 
-        prose-th:bg-gray-50 
-        prose-th:p-3
-        prose-thead:border-b-2
-        prose-thead:border-gray-200
-        prose-tr:border-b
-        prose-tr:border-gray-200
-        prose-tr:last:border-b-0
-        whitespace-pre-wrap
-        ${isDarkMode 
-          ? 'prose-invert prose-a:text-blue-400 prose-a:hover:text-blue-300 text-gray-100' 
-          : 'text-gray-800'
+        className={`flex-grow overflow-auto p-4 ${
+          isDarkMode 
+            ? 'bg-gray-800 text-gray-200' 
+            : 'bg-white text-gray-800'
         }`}
-        dangerouslySetInnerHTML={createMarkup()} 
-      />
+      >
+        {mode === 'markdown' ? (
+          <div 
+            className={`prose prose-base max-w-none ${
+              isDarkMode 
+                ? 'prose-invert' 
+                : ''
+            }`}
+            style={{
+              color: isDarkMode ? 'white' : 'inherit',
+              backgroundColor: isDarkMode ? 'rgb(31 41 55)' : 'transparent'
+            }}
+            dangerouslySetInnerHTML={createMarkup()}
+          />
+        ) : (
+          <pre className={`whitespace-pre-wrap break-words text-base ${
+            isDarkMode 
+              ? 'text-gray-200 bg-gray-800' 
+              : 'text-gray-800 bg-white'
+          }`}>{content}</pre>
+        )}
+      </div>
     </div>
   );
 };

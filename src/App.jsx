@@ -6,6 +6,7 @@ import ConversionToggle from "./components/ConversionToggle";
 import DownloadButton from "./components/DownloadButton";
 import DownloadPptxButton from "./components/DownloadPptxButton";
 import AdhkarToast from "./components/AdhkarToast";
+import ImageToText from "./components/ImageToText";
 import { Toaster, toast } from "react-hot-toast";
 import { textToMarkdown, markdownToText } from "./utils/converter";
 import { FaMoon, FaSun, FaBars, FaTimes, FaLanguage } from 'react-icons/fa';
@@ -26,6 +27,22 @@ function AppContent() {
   const [processedContent, setProcessedContent] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 768);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
+
+  const handleImageUpload = ({ imageUrl, extractedText }) => {
+    // Set the uploaded image URL for display
+    setUploadedImageUrl(imageUrl);
+    
+    // Set the extracted text in the content
+    setContent(extractedText);
+    
+    // Optionally, process the text if needed
+    const processedText = mode === 'markdown' 
+      ? textToMarkdown(extractedText) 
+      : extractedText;
+    
+    setProcessedContent(processedText);
+  };
 
   // Process content whenever it changes or mode changes
   useEffect(() => {
@@ -266,22 +283,37 @@ function AppContent() {
       </div>
 
       {/* Main Content Area */}
-      <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 h-[calc(100vh-250px)] ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <Editor 
-          content={content} 
-          setContent={setContent} 
-          onChange={handleContentChange}
-          isDarkMode={isDarkMode}
-          mode={mode}
-          isRTL={isRTL}
-        />
-        <Preview 
-          content={processedContent} 
-          mode={mode}
-          onChange={handlePreviewChange}
-          isDarkMode={isDarkMode}
-          isRTL={isRTL}
-        />
+      <div className={`container mx-auto px-4 py-8`}>
+        <div className="flex justify-between items-center mb-6">
+        <ImageToText onImageUpload={handleImageUpload} />        </div>
+
+        {/* Add ImageToText component
+        <div className="mb-6">
+         
+        </div> */}
+
+        <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 h-[calc(100vh-200px)] overflow-hidden ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <Editor 
+            content={content} 
+            setContent={setContent} 
+            onChange={handleContentChange}
+            isDarkMode={isDarkMode}
+            mode={mode}
+            isRTL={isRTL}
+            uploadedImageUrl={uploadedImageUrl}
+            className="h-full"
+          />
+          <Preview 
+            content={processedContent} 
+            mode={mode}
+            onChange={handlePreviewChange}
+            isDarkMode={isDarkMode}
+            isRTL={isRTL}
+            className="h-full"
+          />
+        </div>
+
+        {/* Rest of the existing content */}
       </div>
 
       {/* Mobile Menu */}

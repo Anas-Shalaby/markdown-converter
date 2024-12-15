@@ -9,7 +9,47 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
-      typography: {
+      prose: {
+        DEFAULT: {
+          css: {
+            '--tw-prose-body': 'inherit',
+            '--tw-prose-headings': 'inherit',
+            '--tw-prose-lead': 'inherit',
+            '--tw-prose-links': 'inherit',
+            '--tw-prose-bold': 'inherit',
+            '--tw-prose-counters': 'inherit',
+            '--tw-prose-bullets': 'inherit',
+            '--tw-prose-hr': 'inherit',
+            '--tw-prose-quotes': 'inherit',
+            '--tw-prose-quote-borders': 'inherit',
+            '--tw-prose-captions': 'inherit',
+            '--tw-prose-code': 'inherit',
+            '--tw-prose-pre-code': 'inherit',
+            '--tw-prose-pre-bg': 'inherit',
+            '--tw-prose-th-borders': 'inherit',
+            '--tw-prose-td-borders': 'inherit',
+          }
+        },
+        invert: {
+          css: {
+            '--tw-prose-body': 'white',
+            '--tw-prose-headings': 'white',
+            '--tw-prose-lead': 'white',
+            '--tw-prose-links': 'white',
+            '--tw-prose-bold': 'white',
+            '--tw-prose-counters': 'white',
+            '--tw-prose-bullets': 'white',
+            '--tw-prose-hr': 'white',
+            '--tw-prose-quotes': 'white',
+            '--tw-prose-quote-borders': 'white',
+            '--tw-prose-captions': 'white',
+            '--tw-prose-code': 'white',
+            '--tw-prose-pre-code': 'white',
+            '--tw-prose-pre-bg': 'rgb(31 41 55)', // dark background
+            '--tw-prose-th-borders': 'white',
+            '--tw-prose-td-borders': 'white',
+          }
+        },
         DEFAULT: {
           css: {
             maxWidth: 'none',
