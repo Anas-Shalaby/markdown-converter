@@ -29,7 +29,7 @@ const Preview = ({
   };
 
   return (
-    <div className={`preview-container flex flex-col h-full ${
+    <div className={`preview-container flex flex-col h-full overflow-auto ${
       isDarkMode ? 'bg-gray-800' : 'bg-white'
     } rounded-lg shadow-md ${className}`}>
       <div className={`px-4 py-2 border-b flex items-center ${
@@ -43,7 +43,7 @@ const Preview = ({
       </div>
 
       <div 
-        className={`flex-grow overflow-auto p-4 ${
+        className={`flex-grow overflow-auto p-4  ${
           isDarkMode 
             ? 'bg-gray-800 text-gray-200' 
             : 'bg-white text-gray-800'
